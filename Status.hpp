@@ -10,7 +10,7 @@
 #include <string>
 
 #ifndef ENABLE_STD_PLUGIN
-#define ENABLE_STD_PLUGIN 1
+#define ENABLE_STD_PLUGIN 0
 #endif // ENABLE_STD_PLUGIN
 
 #ifndef ENABLE_SAFE_PLUGIN

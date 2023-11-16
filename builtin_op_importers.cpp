@@ -2206,13 +2206,15 @@ DEFINE_BUILTIN_OP_IMPORTER(InstanceNormalization)
 {
     // Choose plugin implementation for non-VC and non-HC engines, and native implementation
     // for VC and HC engines.
-    auto flags = ctx->getFlags();
-    uint32_t nativeInstanceNormFlag = 1U << static_cast<uint32_t>(nvonnxparser::OnnxParserFlag::kNATIVE_INSTANCENORM);
-    if (flags & nativeInstanceNormFlag)
-    {
-        return normalizationHelper(ctx, node, inputs);
-    }
-    return instanceNormPluginHelper(ctx, node, inputs);
+    // WAR for no plugin build.
+    return normalizationHelper(ctx, node, inputs);
+    // auto flags = ctx->getFlags();
+    // uint32_t nativeInstanceNormFlag = 1U << static_cast<uint32_t>(nvonnxparser::OnnxParserFlag::kNATIVE_INSTANCENORM);
+    // if (flags & nativeInstanceNormFlag)
+    // {
+    //     return normalizationHelper(ctx, node, inputs);
+    // }
+    // return instanceNormPluginHelper(ctx, node, inputs);
 }
 
 DEFINE_BUILTIN_OP_IMPORTER(IsInf)

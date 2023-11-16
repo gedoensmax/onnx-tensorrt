@@ -5,6 +5,12 @@
 #ifndef NV_ONNX_PARSER_H
 #define NV_ONNX_PARSER_H
 
+#ifdef _MSC_VER
+#define TENSORRTAPI __declspec(dllexport)
+#else
+#define TENSORRTAPI __attribute__((visibility("default")))
+#endif
+
 #include "NvInfer.h"
 #include <stddef.h>
 #include <vector>

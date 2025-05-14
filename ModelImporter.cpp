@@ -369,13 +369,13 @@ void parseGraph(ImporterContext* ctx, ::ONNX_NAMESPACE::GraphProto const& graph,
 
             if (ctx->externalInits.count(initializer.name()))
             {
-                std::cout << initializer.name() << " is extenral!" << std::endl;
+                // std::cout << initializer.name() << " is external!" << std::endl;
                 auto data = ctx->externalInits.at(initializer.name());
                 ctx->getWeightsContext().convertOnnxWeights2(initializer, &weights, data.first, data.second);
             }
             else
             {
-                std::cout << initializer.name() << " is internal!" << std::endl;
+                // std::cout << initializer.name() << " is internal!" << std::endl;
                 ONNXTRT_CHECK(
                     ctx->getWeightsContext().convertOnnxWeights(initializer, &weights) && "Failed to import initializer.",
                     ErrorCode::kUNSUPPORTED_NODE);
@@ -1036,7 +1036,7 @@ bool ModelImporter::parseArb(void* arb) noexcept
         auto* ctx = &mImporterCtx;
         if (arb)
         {
-            std::cout << "attempting hack" << std::endl;
+            // std::cout << "attempting hack" << std::endl;
             ::ONNX_NAMESPACE::ModelProto* model = static_cast<::ONNX_NAMESPACE::ModelProto*>(arb);
             this->importModel(*model);
             return true;
@@ -1116,7 +1116,7 @@ bool ModelImporter::loadInitializers(const char** names, const char** data, int6
     ONNXTRT_TRY
     {
         auto* ctx = &mImporterCtx;
-        std::cout << "in load initializers, num of initializes: " << size << std::endl;
+        // std::cout << "in load initializers, num of initializes: " << size << std::endl;
 
         for (size_t i = 0; i < size; i++)
         {

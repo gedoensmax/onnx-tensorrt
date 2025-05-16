@@ -4410,8 +4410,7 @@ DEFINE_BUILTIN_OP_IMPORTER(RandomUniformLike)
     ONNXTRT_CHECK_NODE((inputs.size() == 1),
         "The RandomUniformLike operator requires exactly 1 input. Current input size = " << inputs.size() << ".", node,
         nodeIdx, ErrorCode::kINVALID_NODE);
-    ONNXTRT_CHECK_NODE((inputs.at(0).is_tensor()), "The input tensor cannot be an initializer.", node, nodeIdx,
-        nvonnxparser::ErrorCode::kUNSUPPORTED_NODE);
+
     auto& input = inputs.at(0).tensor();
     auto const inputShape = shapeOf(input);
     OnnxAttrs const attrs(node, ctx);
@@ -4435,8 +4434,7 @@ DEFINE_BUILTIN_OP_IMPORTER(RandomNormalLike)
     ONNXTRT_CHECK_NODE((inputs.size() == 1),
         "The RandomNormalLike operator requires exactly 1 input. Current input size = " << inputs.size() << ".", node,
         nodeIdx, ErrorCode::kINVALID_NODE);
-    ONNXTRT_CHECK_NODE((inputs.at(0).is_tensor()), "The input tensor cannot be an initializer.", node, nodeIdx,
-        nvonnxparser::ErrorCode::kUNSUPPORTED_NODE);
+
     auto& input = inputs.at(0).tensor();
     auto const inputShape = shapeOf(input);
     OnnxAttrs const attrs(node, ctx);

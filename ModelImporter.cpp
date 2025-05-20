@@ -367,19 +367,9 @@ void parseGraph(ImporterContext* ctx, ::ONNX_NAMESPACE::GraphProto const& graph,
             LOG_VERBOSE("Importing initializer: " << initializer.name());
             ShapedWeights weights;
 
-            if (ctx->externalInits.count(initializer.name()))
-            {
-                // std::cout << initializer.name() << " is external!" << std::endl;
-                auto data = ctx->externalInits.at(initializer.name());
-                ctx->getWeightsContext().convertOnnxWeights2(initializer, &weights, data.first, data.second);
-            }
-            else
-            {
-                // std::cout << initializer.name() << " is internal!" << std::endl;
-                ONNXTRT_CHECK(
-                    ctx->getWeightsContext().convertOnnxWeights(initializer, &weights) && "Failed to import initializer.",
-                    ErrorCode::kUNSUPPORTED_NODE);
-            }
+            ONNXTRT_CHECK(
+                ctx->getWeightsContext().convertOnnxWeights(initializer, &weights) && "Failed to import initializer.",
+                ErrorCode::kUNSUPPORTED_NODE);
             ctx->registerTensor(TensorOrWeights{std::move(weights)}, initializer.name());
         }
     }
@@ -1029,24 +1019,6 @@ char const* const* ModelImporter::getUsedVCPluginLibraries(int64_t& nbPluginLibs
     return (nbPluginLibs > 0) ? mPluginLibraryListCStr.data() : nullptr;
 }
 
-bool ModelImporter::parseArb(void* arb) noexcept
-{
-    ONNXTRT_TRY
-    {
-        auto* ctx = &mImporterCtx;
-        if (arb)
-        {
-            // std::cout << "attempting hack" << std::endl;
-            ::ONNX_NAMESPACE::ModelProto* model = static_cast<::ONNX_NAMESPACE::ModelProto*>(arb);
-            this->importModel(*model);
-            return true;
-        }
-    }
-    ONNXTRT_CATCH_RECORD
-    return false;
-}
-
-
 bool ModelImporter::loadModelProto(void const* serialized_onnx_model, size_t serialized_onnx_model_size, const char* model_path) noexcept
 {
     ONNXTRT_TRY
@@ -1063,6 +1035,10 @@ bool ModelImporter::loadModelProto(void const* serialized_onnx_model, size_t ser
             Initial set up
         */
         auto* ctx = &mImporterCtx;
+        if (model_path)
+        {
+            mImporterCtx.setOnnxFileLocation(model_path);
+        }
         mImporterCtx.clearOpsets();
         // Add domain import limit for security reasons
         int32_t const MAX_DOMAINS = 1024;
@@ -1120,7 +1096,7 @@ bool ModelImporter::loadInitializers(const char** names, const char** data, int6
 
         for (size_t i = 0; i < size; i++)
         {
-            ctx->externalInits.insert({std::string(names[i]), {data[i], sizes[i]}});
+            ctx->getWeightsContext().externalInits().insert({std::string(names[i]), {data[i], sizes[i]}});
         }
 
         return true;
